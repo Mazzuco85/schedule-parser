@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Schedule Parser</title>
+  <meta name="theme-color" content="#0b1220">
+</head>
+<body style="background:#0b1220;color:#e8eeff;font-family:-apple-system,system-ui;padding:16px">
+
+<h2>Schedule Parser</h2>
+
+<p>Cole abaixo o texto da escala mensal (copiado do PDF):</p>
+
+<textarea id="input" rows="10" style="width:100%;padding:10px"></textarea>
+
+<p>Dia do mês:</p>
+<input id="day" type="number" min="1" max="31" value="1">
+
+<br><br>
+<button onclick="run()">Ver funcionários</button>
+
+<pre id="out"></pre>
+
+<script>
+function run(){
+  const text = document.getElementById("input").value;
+  const day = document.getElementById("day").value;
+  if(!text){
+    alert("Cole a escala primeiro");
+    return;
+  }
+
+  const lines = text.split("\\n");
+  let result = [];
+
+  for(const line of lines){
+    if(!line.trim()) continue;
+    if(line.includes(day)){
+      result.push(line);
+    }
+  }
+
+  document.getElementById("out").textContent =
+    result.length ? result.join("\\n") : "Nada encontrado para o dia " + day;
+}
+</script>
+
+</body>
+</html>
