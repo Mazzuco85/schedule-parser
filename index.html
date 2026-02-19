@@ -1,78 +1,24 @@
 <!doctype html>
-<html lang="pt-BR">
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Schedule Parser</title>
-  <meta name="theme-color" content="#0b1220">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Schedule Parser</title>
+<meta name="theme-color" content="#0b1220">
+<style>
+body{background:#0b1220;color:#e8eeff;font-family:system-ui;padding:16px}
+button{padding:10px 14px;margin-top:10px}
+</style>
 </head>
-<body style="background:#0b1220;color:#e8eeff;font-family:-apple-system,system-ui;padding:16px">
+<body>
 
 <h2>Schedule Parser</h2>
 
-<p>Cole abaixo o texto da escala mensal (copiado do PDF):</p>
-
-<textarea id="input" rows="10" style="width:100%;padding:10px"></textarea>
-
-<p>Dia do mês:</p>
-<input id="day" type="number" min="1" max="31" value="1">
-
-<br><br>
-<button onclick="run()">Processar</button>
-<button onclick="copyWorking()">Copiar trabalhando</button>
-
-<h3>🟢 Trabalhando</h3>
-<pre id="working"></pre>
-
-<h3>🟡 Folga</h3>
-<pre id="off"></pre>
-
-<h3>🔴 Dispensa médica</h3>
-<pre id="medical"></pre>
-
-<script>
-function run(){
-  const text = document.getElementById("input").value;
-  const day = document.getElementById("day").value;
-
-  const working = [];
-  const off = [];
-  const medical = [];
-
-  const OFF = ["FG","FA","FF","FC"];
-  const MED = ["DM","AJ","EMT"];
-
-  const lines = text.split("\\n");
-
-  for(const line of lines){
-    if(!line.trim()) continue;
-
-    if(line.includes(day)){
-      if(OFF.some(c => line.includes(c))){
-        off.push(line);
-      } else if(MED.some(c => line.includes(c))){
-        medical.push(line);
-      } else {
-        working.push(line);
-      }
-    }
-  }
-
-  document.getElementById("working").textContent = working.join("\\n");
-  document.getElementById("off").textContent = off.join("\\n");
-  document.getElementById("medical").textContent = medical.join("\\n");
-}
-
-function copyWorking(){
-  const text = document.getElementById("working").textContent;
-  if(!text){
-    alert("Nada para copiar");
-    return;
-  }
-  navigator.clipboard.writeText(text);
-  alert("Copiado!");
-}
-</script>
+<input type="file" id="pdfInput" accept="application/pdf">
+<br>
+<input type="date" id="dateInput">
+<br>
+<button onclick="alert('Base app funcionando')">Get staff</button>
 
 </body>
 </html>
