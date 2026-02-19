@@ -1,24 +1,91 @@
 <!doctype html>
-<html>
+<html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Schedule Parser</title>
-<meta name="theme-color" content="#0b1220">
-<style>
-body{background:#0b1220;color:#e8eeff;font-family:system-ui;padding:16px}
-button{padding:10px 14px;margin-top:10px}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Schedule Parser</title>
+  <meta name="theme-color" content="#0b1220">
+  <style>
+    body{background:#0b1220;color:#e8eeff;font-family:-apple-system,system-ui;padding:16px}
+    textarea,input,button{font:inherit}
+    textarea{width:100%;padding:12px;border-radius:10px}
+    input{padding:10px;border-radius:10px}
+    button{padding:10px 14px;border-radius:10px;margin-right:8px}
+    .box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px;margin-top:12px}
+    h3{margin:14px 0 8px}
+    pre{white-space:pre-wrap;word-break:break-word}
+  </style>
 </head>
 <body>
 
 <h2>Schedule Parser</h2>
+<p>Cole aqui o texto da escala (copiado do PDF). Pode colar uma página/turno por vez ou tudo junto.</p>
 
-<input type="file" id="pdfInput" accept="application/pdf">
-<br>
-<input type="date" id="dateInput">
-<br>
-<button onclick="alert('Base app funcionando')">Get staff</button>
+<textarea id="input" rows="10" placeholder="Cole aqui..."></textarea>
+
+<div style="margin-top:10px">
+  <label>Dia: </label>
+  <input id="day" type="number" min="1" max="31" value="1">
+  <button onclick="run()">Processar</button>
+  <button onclick="copyWorking()">Copiar trabalhando</button>
+</div>
+
+<div class="box">
+  <h3>🟢 Trabalhando</h3>
+  <pre id="working"></pre>
+</div>
+
+<div class="box">
+  <h3>🟡 Folga</h3>
+  <pre id="off"></pre>
+</div>
+
+<div class="box">
+  <h3>🔴 Dispensa médica</h3>
+  <pre id="medical"></pre>
+</div>
+
+<script>
+const OFF = ["FG","FA","FC","FE","FF","FAN","COVE"];
+const MED = ["DM","EMT","AJ","X"];
+
+function run(){
+  const text = document.getElementById("input").value || "";
+  const day = String(document.getElementById("day").value || "1");
+
+  const working = [];
+  const off = [];
+  const medical = [];
+
+  const lines = text.split("\\n").map(l=>l.trim()).filter(Boolean);
+
+  for(const line of lines){
+    // regra simples: a linha precisa ter o dia escolhido
+    if(!line.includes(day)) continue;
+
+    const upper = line.toUpperCase();
+
+    if(OFF.some(c => upper.includes(c))) off.push(line);
+    else if(MED.some(c => upper.includes(c))) medical.push(line);
+    else working.push(line);
+  }
+
+  document.getElementById("working").textContent = working.join("\\n") || "—";
+  document.getElementById("off").textContent = off.join("\\n") || "—";
+  document.getElementById("medical").textContent = medical.join("\\n") || "—";
+}
+
+async function copyWorking(){
+  const txt = document.getElementById("working").textContent.trim();
+  if(!txt || txt==="—"){ alert("Nada para copiar"); return; }
+  try{
+    await navigator.clipboard.writeText(txt);
+    alert("Copiado ✅");
+  }catch{
+    alert("Não consegui copiar. Tente colar manualmente.");
+  }
+}
+</script>
 
 </body>
 </html>
